@@ -19,14 +19,15 @@ defmodule SunlightHours do
           apartment_number: non_neg_integer()
         }
 
-
   @spec calc(neighborghood, query) :: tuple()
   def calc(neighborghood, query) do
     neighborghood.buildings
-    |> Enum.with_index
+    |> Enum.with_index()
     |> Enum.find(fn {x, _} -> x.name === query.name end)
     |> case do
-      nil -> :error
+      nil ->
+        :error
+
       current_building_with_index ->
         {
           calc_direction(neighborghood, current_building_with_index, :right),
@@ -42,13 +43,16 @@ defmodule SunlightHours do
     neighborghood.buildings
     |> slice_array(direction, building_index, building_length)
     |> Enum.max_by(fn x -> x.apartment_count end, fn -> :no_shadow end)
-    |> case  do
-      :no_shadow -> cast_no_shadow(direction)
-      biggest_shadow ->
-        width = calc_width(direction, biggest_shadow, building_found)
-        height = neighborghood.apartment_height * biggest_shadow.apartment_count
+    |> case do
+      :no_shadow ->
+        cast_no_shadow(direction)
 
-        calc_angle(direction, width, height)
+      biggest_shadow ->
+        calc_angle(
+          direction,
+          calc_width(direction, biggest_shadow, building_found),
+          neighborghood.apartment_height * biggest_shadow.apartment_count
+        )
     end
   end
 
