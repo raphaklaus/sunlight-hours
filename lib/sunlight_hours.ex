@@ -29,32 +29,35 @@ defmodule SunlightHours do
         :error
 
       current_building_with_index ->
-        {
-          calc_direction(neighborghood, current_building_with_index, :right),
-          calc_direction(neighborghood, current_building_with_index, :left)
-        }
+        calc_direction(neighborghood, current_building_with_index, {})
     end
   end
 
-  defp calc_direction(neighborghood, current_building_with_index, direction) do
+  defp calc_direction(neighborghood, current_building_with_index, result, start_direction \\ :right) do
     {building_found, building_index} = current_building_with_index
-    building_length = length(neighborghood.buildings)
 
     neighborghood.buildings
-    |> slice_array(direction, building_index, building_length)
-    |> Enum.max_by(fn x -> x.apartment_count end, fn -> :no_shadow end)
+    |> slice_array(start_direction, building_index, length(neighborghood.buildings))
+    |> Enum.map(&calc_angle(
+      start_direction,
+      calc_width(start_direction, &1, building_found),
+      neighborghood.apartment_height * &1.apartment_count
+    ))
+    |> check_for_fallback_angle(start_direction)
     |> case do
-      :no_shadow ->
-        cast_no_shadow(direction)
+      angles when start_direction === :left ->
+        Tuple.append(result, Enum.max(angles))
 
-      biggest_shadow ->
-        calc_angle(
-          direction,
-          calc_width(direction, biggest_shadow, building_found),
-          neighborghood.apartment_height * biggest_shadow.apartment_count
+      angles ->
+        calc_direction(neighborghood, current_building_with_index,
+          Tuple.append(result, Enum.max(angles)),
+          :left
         )
     end
   end
+
+  defp check_for_fallback_angle([], start_direction), do: [cast_no_shadow(start_direction)]
+  defp check_for_fallback_angle(angles, _start_direction), do: angles
 
   defp slice_array(buildings, :right, building_index, building_length) do
     Enum.slice(buildings, building_index + 1, building_length)
@@ -67,12 +70,12 @@ defmodule SunlightHours do
   defp cast_no_shadow(:right), do: 0.0
   defp cast_no_shadow(:left), do: 180.0
 
-  defp calc_width(:right, biggest_shadow, building_found) do
-    biggest_shadow.distance - building_found.distance
+  defp calc_width(:right, nearby_building, building_found) do
+    nearby_building.distance - building_found.distance
   end
 
-  defp calc_width(:left, biggest_shadow, building_found) do
-    building_found.distance - biggest_shadow.distance
+  defp calc_width(:left, nearby_building, building_found) do
+    building_found.distance - nearby_building.distance
   end
 
   defp calc_angle(:left, width, height) do
