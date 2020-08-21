@@ -1,8 +1,7 @@
 defmodule SunlightHours do
   @moduledoc """
-  Documentation for SunlightHours.
+    Documentation for SunlightHours.
   """
-
   @type building :: %{
           name: binary(),
           apartment_count: non_neg_integer(),
@@ -20,60 +19,63 @@ defmodule SunlightHours do
           apartment_number: non_neg_integer()
         }
 
+
   @spec calc(neighborghood, query) :: tuple()
   def calc(neighborghood, query) do
     neighborghood.buildings
-    |> Enum.find_index(fn x -> x.name === query.name end)
+    |> Enum.with_index
+    |> Enum.find(fn {x, _} -> x.name === query.name end)
     |> case do
       nil -> :error
-      current_building_index ->
-        building_length = length(neighborghood.buildings)
-        {min_angle(neighborghood.buildings, current_building_index, neighborghood.apartment_height, query.apartment_number), max_angle(building_length, current_building_index)}
+      current_building_with_index ->
+        {
+          calc_direction(neighborghood, current_building_with_index, :right),
+          calc_direction(neighborghood, current_building_with_index, :left)
+        }
     end
   end
 
-  @spec min_angle([building()], non_neg_integer(), non_neg_integer(), non_neg_integer()) :: number()
-  defp min_angle(buildings, current_building_index, _apartment_height, _apartment_number) when current_building_index === length(buildings) - 1 do
-    0
+  defp calc_direction(neighborghood, current_building_with_index, direction) do
+    {building_found, building_index} = current_building_with_index
+    building_length = length(neighborghood.buildings)
+
+    neighborghood.buildings
+    |> slice_array(direction, building_index, building_length)
+    |> Enum.max_by(fn x -> x.apartment_count end, fn -> :no_shadow end)
+    |> case  do
+      :no_shadow -> cast_no_shadow(direction)
+      biggest_shadow ->
+        width = calc_width(direction, biggest_shadow, building_found)
+        height = neighborghood.apartment_height * biggest_shadow.apartment_count
+
+        calc_angle(direction, width, height)
+    end
   end
 
-  defp min_angle(buildings, current_building_index, apartment_height, apartment_number) do
-    width = get_width(buildings, current_building_index)
-    height = get_height(apartment_height, apartment_number, current_building_index, buildings)
+  defp slice_array(buildings, :right, building_index, building_length) do
+    Enum.slice(buildings, building_index + 1, building_length)
+  end
 
-    IO.inspect "width"
-    IO.inspect width
-    IO.inspect "height"
-    IO.inspect height
+  defp slice_array(buildings, :left, building_index, _building_length) do
+    Enum.slice(buildings, 0, building_index)
+  end
 
+  defp cast_no_shadow(:right), do: 0.0
+  defp cast_no_shadow(:left), do: 180.0
+
+  defp calc_width(:right, biggest_shadow, building_found) do
+    biggest_shadow.distance - building_found.distance
+  end
+
+  defp calc_width(:left, biggest_shadow, building_found) do
+    building_found.distance - biggest_shadow.distance
+  end
+
+  defp calc_angle(:left, width, height) do
+    180.0 - Trigonometry.get_angle(width, height)
+  end
+
+  defp calc_angle(:right, width, height) do
     Trigonometry.get_angle(width, height)
-    |> IO.inspect
-  end
-
-  @spec max_angle(number(), number()) :: number()
-  defp max_angle(building_length, building_index)
-
-  defp max_angle(_building_length, 0) do
-    180
-  end
-
-  defp max_angle(_building_length, _building_index) do
-    :non_zero # TODO: do the proper calculation here
-  end
-
-  @spec get_height(number(), number(), non_neg_integer(), [building()]) :: number
-  defp get_height(apartment_height, apartment_number, current_building_index, buildings) do
-    current_apartment_height = apartment_height + apartment_number
-    building = Enum.at(buildings, current_building_index + 1)
-
-    next_building_height = building.apartment_count * apartment_height
-
-    next_building_height - current_apartment_height
-  end
-
-  @spec get_width([building()], number()) :: number()
-  defp get_width(buildings, current_building_index) do
-    Enum.at(buildings, current_building_index + 1) # cautious with this operation!
-    |> Map.get(:distance)
   end
 end
