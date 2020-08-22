@@ -1,21 +1,37 @@
 # SunlightHours
 
-**TODO: Add description**
+Find out how much a neighborhood receives of sunlight.
 
-## Installation
+To run that you must have Elixir and Erlang installed.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `sunlight_hours` to your list of dependencies in `mix.exs`:
+## How to use it
 
-```elixir
-def deps do
-  [
-    {:sunlight_hours, "~> 0.1.0"}
-  ]
-end
+```bash
+  $ iex -S mix
+  iex > SunlightHours.calc(%{
+          apartment_height: 1,
+          buildings: [
+            %{
+              name: "Building 1",
+              apartment_count: 5,
+              distance: 1
+            }
+          ]
+        },
+        %{
+          name: "Building 1",
+          apartment_number: 0
+        })
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/sunlight_hours](https://hexdocs.pm/sunlight_hours).
+## Testing
 
+```bash
+  $ mix test
+```
+
+## Coverage
+
+```bash
+  $ mix coveralls
+```
