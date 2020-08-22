@@ -3,14 +3,14 @@ defmodule Utils do
   @ending_base_minutes 11 + 540
 
   @type angle_tuple :: {
-    number(),
-    number()
-  }
+          number(),
+          number()
+        }
 
   @type hour_tuple :: {
-    binary(),
-    binary()
-  }
+          binary(),
+          binary()
+        }
 
   @spec angles_to_hours(angle_tuple()) :: hour_tuple()
   def angles_to_hours(angles) do

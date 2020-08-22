@@ -1,7 +1,10 @@
 defmodule SunlightHours do
+  use GenServer
+
   @moduledoc """
     Documentation for SunlightHours.
   """
+
   @type building :: %{
           name: binary(),
           apartment_count: non_neg_integer(),
@@ -9,28 +12,41 @@ defmodule SunlightHours do
         }
 
   @type neighborhood :: %{
-          neighborhood: binary(),
+          neighborhood_name: binary(),
           apartment_height: non_neg_integer(),
           buildings: [building()]
         }
 
   @type query :: %{
-          name: binary(),
+          building_name: binary(),
+          neighborhood_name: binary(),
           apartment_number: non_neg_integer()
         }
 
-  @spec calc(neighborhood, query) :: tuple()
-  def calc(neighborhood, query) do
-    neighborhood.buildings
+  def init(neighborhoods) do
+    {:ok, neighborhoods}
+  end
+
+  def handle_call({:calc, query}, _from, state) do
+    {:reply, calc(state, query), state}
+  end
+
+  @spec calc([neighborhood], query) :: tuple()
+  def calc(neighborhoods, query) do
+    current_neighborhood =
+      neighborhoods
+      |> Enum.find(%{buildings: []}, fn x -> x.neighborhood_name === query.neighborhood_name end)
+
+    current_neighborhood.buildings
     |> Enum.with_index()
-    |> Enum.find(fn {x, _} -> x.name === query.name end)
+    |> Enum.find(fn {x, _} -> x.building_name === query.building_name end)
     |> case do
       nil ->
         :error
 
       current_building_with_index ->
-        calc_direction(query, neighborhood, current_building_with_index, {})
-        |> Utils.angles_to_hours
+        calc_direction(query, current_neighborhood, current_building_with_index, {})
+        |> Utils.angles_to_hours()
     end
   end
 
