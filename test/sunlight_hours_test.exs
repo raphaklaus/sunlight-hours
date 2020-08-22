@@ -18,7 +18,7 @@ defmodule SunlightHoursTest do
                name: "Building 1",
                apartment_number: 0
              }
-           ) === {0.0, 180.0}
+           ) === {"08:14", "17:25"}
   end
 
   test "2 buildings, the queried is behind another, should get partial sunlight" do
@@ -42,7 +42,7 @@ defmodule SunlightHoursTest do
                name: "Building 1",
                apartment_number: 0
              }
-           ) === {45.0, 180.0}
+           ) === {"10:31", "17:25"}
   end
 
   test "2 buildings, the queried is behind another, using apartment_number, should get partial sunlight" do
@@ -66,10 +66,10 @@ defmodule SunlightHoursTest do
                name: "Building 1",
                apartment_number: 1
              }
-           ) === {45.0, 180.0}
+           ) === {"10:31", "17:25"}
   end
 
-  test "2 buildings, the queried is taller, using apartment_number, should get partial sunlight" do
+  test "2 buildings, the queried is taller, using apartment_number, should get sunlight all day" do
     assert SunlightHours.calc(
              %{
                apartment_height: 1,
@@ -90,7 +90,7 @@ defmodule SunlightHoursTest do
                name: "Building 1",
                apartment_number: 3
              }
-           ) === {0.0, 180.0}
+           ) === {"08:14", "17:25"}
   end
 
   test "2 buildings, the queried is behind another bigger one, should get partial sunlight" do
@@ -114,7 +114,7 @@ defmodule SunlightHoursTest do
                name: "Building 1",
                apartment_number: 0
              }
-           ) === {63.43494882292202, 180.0}
+           ) === {"11:28", "17:25"}
   end
 
   test "3 building, the queried is in between, should get partial sunlight" do
@@ -143,7 +143,7 @@ defmodule SunlightHoursTest do
                name: "Building 2",
                apartment_number: 0
              }
-           ) === {63.43494882292202, 135.0}
+           ) === {"11:28", "15:07"}
   end
 
   test "4 buildings, the queried is in the far-left and there is a big one next to it, should get partial sunlight" do
@@ -177,7 +177,7 @@ defmodule SunlightHoursTest do
                name: "Building 1",
                apartment_number: 0
              }
-           ) === {68.19859051364818, 180.0}
+           ) === {"11:42", "17:25"}
   end
 
   test "3 buildings, but queried none of them, should return an error atom" do

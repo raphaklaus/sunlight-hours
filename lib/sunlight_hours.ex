@@ -30,6 +30,7 @@ defmodule SunlightHours do
 
       current_building_with_index ->
         calc_direction(query, neighborhood, current_building_with_index, {})
+        |> Utils.angle_to_hour
     end
   end
 

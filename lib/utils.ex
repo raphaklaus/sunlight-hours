@@ -2,8 +2,19 @@ defmodule Utils do
   @starting_base_minutes 14 + 8 * 60
   @ending_base_minutes 11 + 540
 
-  def angle_to_hour(angle) do
-    {starting, ending} = angle
+  @type angle_tuple :: {
+    number(),
+    number()
+  }
+
+  @type hour_tuple :: {
+    binary(),
+    binary()
+  }
+
+  @spec angle_to_hour(angle_tuple()) :: hour_tuple()
+  def angle_to_hour(angles) do
+    {starting, ending} = angles
 
     starting_in_minutes = @starting_base_minutes + starting * @ending_base_minutes / 180
     ending_in_minutes = @starting_base_minutes + ending * @ending_base_minutes / 180
