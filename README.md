@@ -35,8 +35,8 @@ When inside the project's REPL:
   GenServer.call(pid,
     {:get,
     %{
-      neighborhood_name: "02",
-      building_name: "Building 99",
+      neighborhood_name: "01",
+      building_name: "Building 1",
       apartment_number: 0
     }}
   )
