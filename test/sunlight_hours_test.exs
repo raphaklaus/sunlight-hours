@@ -45,6 +45,54 @@ defmodule SunlightHoursTest do
            ) === {45.0, 180.0}
   end
 
+  test "2 buildings, the queried is behind another, using apartment_number, should get partial sunlight" do
+    assert SunlightHours.calc(
+             %{
+               apartment_height: 1,
+               buildings: [
+                 %{
+                   name: "Building 1",
+                   apartment_count: 1,
+                   distance: 1
+                 },
+                 %{
+                   name: "Building 2",
+                   apartment_count: 2,
+                   distance: 2
+                 }
+               ]
+             },
+             %{
+               name: "Building 1",
+               apartment_number: 1
+             }
+           ) === {45.0, 180.0}
+  end
+
+  test "2 buildings, the queried is taller, using apartment_number, should get partial sunlight" do
+    assert SunlightHours.calc(
+             %{
+               apartment_height: 1,
+               buildings: [
+                 %{
+                   name: "Building 1",
+                   apartment_count: 3,
+                   distance: 1
+                 },
+                 %{
+                   name: "Building 2",
+                   apartment_count: 2,
+                   distance: 2
+                 }
+               ]
+             },
+             %{
+               name: "Building 1",
+               apartment_number: 3
+             }
+           ) === {0.0, 180.0}
+  end
+
   test "2 buildings, the queried is behind another bigger one, should get partial sunlight" do
     assert SunlightHours.calc(
              %{

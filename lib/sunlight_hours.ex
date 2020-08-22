@@ -8,7 +8,7 @@ defmodule SunlightHours do
           distance: non_neg_integer()
         }
 
-  @type neighborghood :: %{
+  @type neighborhood :: %{
           neighborhood: binary(),
           apartment_height: non_neg_integer(),
           buildings: [building()]
@@ -19,9 +19,9 @@ defmodule SunlightHours do
           apartment_number: non_neg_integer()
         }
 
-  @spec calc(neighborghood, query) :: tuple()
-  def calc(neighborghood, query) do
-    neighborghood.buildings
+  @spec calc(neighborhood, query) :: tuple()
+  def calc(neighborhood, query) do
+    neighborhood.buildings
     |> Enum.with_index()
     |> Enum.find(fn {x, _} -> x.name === query.name end)
     |> case do
@@ -29,27 +29,40 @@ defmodule SunlightHours do
         :error
 
       current_building_with_index ->
-        calc_direction(neighborghood, current_building_with_index, {})
+        calc_direction(query, neighborhood, current_building_with_index, {})
     end
   end
 
-  defp calc_direction(neighborghood, current_building_with_index, result, start_direction \\ :right) do
-    {building_found, building_index} = current_building_with_index
+  defp calc_direction(
+         query,
+         neighborhood,
+         current_building_with_index,
+         result,
+         start_direction \\ :right
+       ) do
+    {queried_building, building_index} = current_building_with_index
 
-    neighborghood.buildings
-    |> slice_array(start_direction, building_index, length(neighborghood.buildings))
-    |> Enum.map(&calc_angle(
-      start_direction,
-      calc_width(start_direction, &1, building_found),
-      neighborghood.apartment_height * &1.apartment_count
-    ))
+    neighborhood.buildings
+    |> slice_array(start_direction, building_index, length(neighborhood.buildings))
+    |> Enum.map(
+      &calc_angle(
+        start_direction,
+        calc_width(start_direction, &1, queried_building),
+        neighborhood.apartment_height * &1.apartment_count -
+          query.apartment_number * neighborhood.apartment_height
+      )
+    )
+    |> Enum.map(&max(0.0, &1))
     |> check_for_fallback_angle(start_direction)
     |> case do
       angles when start_direction === :left ->
         Tuple.append(result, Enum.max(angles))
 
       angles ->
-        calc_direction(neighborghood, current_building_with_index,
+        calc_direction(
+          query,
+          neighborhood,
+          current_building_with_index,
           Tuple.append(result, Enum.max(angles)),
           :left
         )
@@ -70,12 +83,12 @@ defmodule SunlightHours do
   defp cast_no_shadow(:right), do: 0.0
   defp cast_no_shadow(:left), do: 180.0
 
-  defp calc_width(:right, nearby_building, building_found) do
-    nearby_building.distance - building_found.distance
+  defp calc_width(:right, nearby_building, queried_building) do
+    nearby_building.distance - queried_building.distance
   end
 
-  defp calc_width(:left, nearby_building, building_found) do
-    building_found.distance - nearby_building.distance
+  defp calc_width(:left, nearby_building, queried_building) do
+    queried_building.distance - nearby_building.distance
   end
 
   defp calc_angle(:left, width, height) do
