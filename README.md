@@ -10,20 +10,36 @@ To run that you must have Elixir and Erlang installed.
 
 ```bash
   $ iex -S mix
-  iex > SunlightHours.calc(%{
-          apartment_height: 1,
-          buildings: [
-            %{
-              name: "Building 1",
-              apartment_count: 5,
-              distance: 1
-            }
-          ]
-        },
-        %{
-          name: "Building 1",
-          apartment_number: 0
-        })
+```
+
+When inside the project's REPL:
+
+```elixir
+  # To init the server with some state
+  {:ok, pid} =
+    GenServer.start_link(SunlightHours, [
+      %{
+        neighborhood_name: "01",
+        apartment_height: 1,
+        buildings: [
+          %{
+            building_name: "Building 1",
+            apartment_count: 1,
+            distance: 1
+          }
+        ]
+      }
+    ])
+
+  # To get the hours of sunlight
+  GenServer.call(pid,
+    {:calc,
+    %{
+      neighborhood_name: "02",
+      building_name: "Building 99",
+      apartment_number: 0
+    }}
+  )
 ```
 
 ## Testing
