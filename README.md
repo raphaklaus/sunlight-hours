@@ -44,9 +44,13 @@ When inside the project's REPL:
 
 ## Testing
 
+You can run it like this:
+
 ```bash
   $ mix test
 ```
+
+Or take a look into the [GitHub Action tab](https://github.com/raphaklaus/sunlight-hours/actions) 🚀
 
 ## Coverage
 
