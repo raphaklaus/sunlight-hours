@@ -29,7 +29,7 @@ defmodule SunlightHours do
     {:ok, neighborhoods}
   end
 
-  def handle_call({:calc, query}, _from, state) do
+  def handle_call({:get, query}, _from, state) do
     {:reply, calc(state, query), state}
   end
 

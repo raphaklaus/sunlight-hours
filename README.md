@@ -33,7 +33,7 @@ When inside the project's REPL:
 
   # To get the hours of sunlight
   GenServer.call(pid,
-    {:calc,
+    {:get,
     %{
       neighborhood_name: "02",
       building_name: "Building 99",

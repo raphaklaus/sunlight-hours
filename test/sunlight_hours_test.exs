@@ -20,7 +20,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 1",
@@ -52,7 +52,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 1",
@@ -84,7 +84,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 1",
@@ -116,7 +116,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 1",
@@ -148,7 +148,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 1",
@@ -185,7 +185,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 2",
@@ -227,7 +227,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 1",
@@ -264,7 +264,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "01",
                 building_name: "Building 99",
@@ -291,7 +291,7 @@ defmodule SunlightHoursTest do
 
     assert GenServer.call(
              pid,
-             {:calc,
+             {:get,
               %{
                 neighborhood_name: "02",
                 building_name: "Building 99",
