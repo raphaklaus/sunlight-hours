@@ -1,5 +1,7 @@
 # SunlightHours
 
+![Elixir CI](https://github.com/raphaklaus/sunlight-hours/workflows/Elixir%20CI/badge.svg)
+
 Find out how much a neighborhood receives of sunlight.
 
 To run that you must have Elixir and Erlang installed.
