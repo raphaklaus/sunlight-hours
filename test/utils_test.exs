@@ -14,7 +14,7 @@ defmodule UtilsTest do
     ]
 
     for {angles, hours} <- test_data do
-      assert Utils.angle_to_hour(angles) === hours
+      assert Utils.angles_to_hours(angles) === hours
     end
   end
 end
