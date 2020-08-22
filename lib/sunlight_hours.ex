@@ -23,6 +23,8 @@ defmodule SunlightHours do
           apartment_number: non_neg_integer()
         }
 
+  @null_map %{buildings: []}
+
   def init(neighborhoods) do
     {:ok, neighborhoods}
   end
@@ -35,7 +37,7 @@ defmodule SunlightHours do
   def calc(neighborhoods, query) do
     current_neighborhood =
       neighborhoods
-      |> Enum.find(%{buildings: []}, fn x -> x.neighborhood_name === query.neighborhood_name end)
+      |> Enum.find(@null_map, fn x -> x.neighborhood_name === query.neighborhood_name end)
 
     current_neighborhood.buildings
     |> Enum.with_index()
