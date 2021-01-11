@@ -1,6 +1,8 @@
-# SunlightHours
+# Sunlight Hours
 
 ![Elixir CI](https://github.com/raphaklaus/sunlight-hours/workflows/Elixir%20CI/badge.svg)
+
+Made this to the Badi Engineering code challenge.
 
 Find out how much a neighborhood receives of sunlight.
 
